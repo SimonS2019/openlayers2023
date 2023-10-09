@@ -88,7 +88,7 @@ function init(){
       let baseLayerElementValue = this.value;
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue) 
+        element.setVisible(baseLayerName === baseLayerElementValue)
       })
     })
   }
@@ -97,7 +97,8 @@ function init(){
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
     source: new ol.source.TileDebug(),
-    visible: false
+    visible: true,
+    title: 'TileDebugLayer'
   })
 
   // tile ArcGIS REST API Layer
@@ -106,7 +107,8 @@ function init(){
       url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Louisville/LOJIC_LandRecords_Louisville/MapServer",
       attributions: 'Copyright© 2008, MSD, PVA, Louisville Water Company, Louisville Metro Government'
     }),
-    visible: false
+    visible: true,
+    title: 'TileArcGISLayer'
   })
   
 
@@ -121,8 +123,33 @@ function init(){
       },
       attributions: '<a href=https://nowcoast.noaa.gov/>© NOAA<a/>'
     }),
-    visible: false
+    visible: true,
+    title: 'NOAAWMSLayer'
   })
+
+  // Raster Tile Layer Group
+  const rasterTileLayerGroup = new ol.layer.Group({
+    layers:[
+      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer
+    ]
+  })
+  map.addLayer(rasterTileLayerGroup);
+
+  // Layer Switcher Logic for Raster Tile Layers
+  const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
+  for(let tileRasterLayerElement of tileRasterLayerElements){
+    tileRasterLayerElement.addEventListener('change', function(){
+      let tileRasterLayerElementValue = this.value;
+      let tileRasterLayer;
+
+      rasterTileLayerGroup.getLayers().forEach(function(element, index, array){
+        if(tileRasterLayerElementValue === element.get('title')){
+          tileRasterLayer = element;
+        }
+      })
+      this.checked ? tileRasterLayer.setVisible(true) : tileRasterLayer.setVisible(false)
+    })
+  }
 }
 
 
