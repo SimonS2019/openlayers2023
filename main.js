@@ -36,7 +36,7 @@ function init(){
   // Bing Maps Basemap Layer
   const bingMaps = new ol.layer.Tile({
     source: new ol.source.BingMaps({
-      key: "Your Bingmaps API Key Here",
+      key: "Your Bing Maps API Key Here",
       imagerySet: 'CanvasGray'  // Road, CanvasDark, CanvasGray
     }),
     visible: false,
@@ -127,13 +127,23 @@ function init(){
     title: 'NOAAWMSLayer'
   })
 
+  // Static Image OpenstreetMap
+  const openstreetMapFragmentStatic = new ol.layer.Image({
+    source: new ol.source.ImageStatic({
+      url: './data/static_images/openlayers_static_humanitarian.PNG',
+      imageExtent: [4991698.9328313675, 5050292.393744084, 10008191.828130603, 10013417.911357462],
+      attributions: '<a href=https://www.openstreetmap.org/copyright/>© OpenStreetMap contributors<a/>',
+    }),
+    title: 'openstreetMapFragmentStatic'
+  })
+
   // Raster Tile Layer Group
-  const rasterTileLayerGroup = new ol.layer.Group({
+  const rasterLayerGroup = new ol.layer.Group({
     layers:[
-      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer
+      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic
     ]
   })
-  map.addLayer(rasterTileLayerGroup);
+  map.addLayer(rasterLayerGroup);
 
   // Layer Switcher Logic for Raster Tile Layers
   const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
@@ -142,7 +152,7 @@ function init(){
       let tileRasterLayerElementValue = this.value;
       let tileRasterLayer;
 
-      rasterTileLayerGroup.getLayers().forEach(function(element, index, array){
+      rasterLayerGroup.getLayers().forEach(function(element, index, array){
         if(tileRasterLayerElementValue === element.get('title')){
           tileRasterLayer = element;
         }
@@ -150,6 +160,7 @@ function init(){
       this.checked ? tileRasterLayer.setVisible(true) : tileRasterLayer.setVisible(false)
     })
   }
+
 }
 
 
