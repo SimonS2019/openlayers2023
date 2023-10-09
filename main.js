@@ -31,11 +31,10 @@ function init(){
         extent: [12400753.576694038, -5658730.000549673, 17174426.336716905, -980228.5067132516],
         opacity: 0.1
       }),
-
       // Bing Maps Basemap Layer
       new ol.layer.Tile({
         source: new ol.source.BingMaps({
-          key: "Your Bingmaps API KEY Here",
+          key: "Your Bing Maps API Key Here",
           imagerySet: 'CanvasGray'  // Road, CanvasDark, CanvasGray
         }),
         visible: false
@@ -79,6 +78,15 @@ function init(){
     visible: true
   })
   map.addLayer(stamenBaseMapLayer);
+
+  // tile ArcGIS REST API Layer
+  const tileArcGISLayer = new ol.layer.Tile({
+    source: new ol.source.TileArcGISRest({
+      url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Louisville/LOJIC_LandRecords_Louisville/MapServer"
+    }),
+    visible: true
+  })
+  map.addLayer(tileArcGISLayer);
 }
 
 
