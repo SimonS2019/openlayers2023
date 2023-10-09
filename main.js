@@ -185,19 +185,20 @@ function init(){
     }),
     radius: 20,
     blur: 12,
-    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
-    title: 'OnlineFBUsers',
-    visible: false
+    // gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
+    // title: 'OnlineFBUsers',
+    // visible: false
   })
   
   // Layer Group
-  const layerGroup = new ol.layer.Group({
-    layers:[
-      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic,
-      EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers
-    ]
-  })
-  map.addLayer(layerGroup);
+  // const layerGroup = new ol.layer.Group({
+  //   layers:[
+  //     tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic,
+  //     EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers
+  //   ]
+  // })
+  // map.addLayer(layerGroup);
+  map.addLayer(heatMapOnlineFBUsers);
 
   // Layer Switcher Logic for Raster Tile Layers
   const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
