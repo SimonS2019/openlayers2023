@@ -34,7 +34,7 @@ function init(){
       // Bing Maps Basemap Layer
       new ol.layer.Tile({
         source: new ol.source.BingMaps({
-          key: "Your Bing Maps API Key Here",
+          key: "Your Bingmaps API Key Here",
           imagerySet: 'CanvasGray'  // Road, CanvasDark, CanvasGray
         }),
         visible: false
@@ -68,6 +68,7 @@ function init(){
     }),
     visible: false
   })
+
   map.addLayer(stamenBaseLayer);
 
   const stamenBaseMapLayer = new ol.layer.Tile({
@@ -84,9 +85,23 @@ function init(){
     source: new ol.source.TileArcGISRest({
       url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Louisville/LOJIC_LandRecords_Louisville/MapServer"
     }),
-    visible: true
+    visible: false
   })
   map.addLayer(tileArcGISLayer);
+
+  // NOAA WMS Layer
+  const NOAAWMSLayer = new ol.layer.Tile({
+    source: new ol.source.TileWMS({
+      url:'https://nowcoast.noaa.gov/arcgis/services/nowcoast/forecast_meteoceanhydro_sfc_ndfd_dailymaxairtemp_offsets/MapServer/WMSServer?',
+      params:{
+        LAYERS: 5,
+        FORMAT: 'image/png',
+        TRANSPARENT: true
+      },
+      attributions: '<a href=https://nowcoast.noaa.gov/>© NOAA<a/>'
+    })
+  })
+  map.addLayer(NOAAWMSLayer);
 }
 
 
