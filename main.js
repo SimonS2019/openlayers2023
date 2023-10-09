@@ -6,7 +6,6 @@ function init(){
     collapsible: true
   })
 
-  // Map object
   const map = new ol.Map({
     view: new ol.View({
       center: [0, 0],
@@ -36,7 +35,7 @@ function init(){
   // Bing Maps Basemap Layer
   const bingMaps = new ol.layer.Tile({
     source: new ol.source.BingMaps({
-      key: "Your Bing Maps API Key Here",
+      key: "Your Bingmaps API Key Here",
       imagerySet: 'CanvasGray'  // Road, CanvasDark, CanvasGray
     }),
     visible: false,
@@ -72,11 +71,31 @@ function init(){
     title: 'StamenTerrain'
   })
 
-  // Layer Group
+  // Base Vector Layers
+  // Vector Tile Layer OpenstreetMap
+  const openstreetMapVectorTile = new ol.layer.VectorTile({
+    source: new ol.source.VectorTile({
+      url:'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=eNZMd85Lie6HD3TUfd5e',
+      format: new ol.format.MVT(),
+      attributions:'<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+    }),
+    visible: false,
+    title: 'VectorTileLayerOpenstreetMap'
+  })
+ 
+  const openstreetMapVectorTileStyles = 'Your Map Tiler Style URL';
+  fetch(openstreetMapVectorTileStyles).then(function(response) {    
+    response.json().then(function(glStyle) {       
+      olms.applyStyle(openstreetMapVectorTile, glStyle, 'Your Map Tiler ID');
+    });
+  });
+
+
+  // Base Layer Group
   const baseLayerGroup = new ol.layer.Group({
     layers: [
       openstreetMapStandard, openstreetMapHumanitarian, bingMaps, cartoDBBaseLayer,
-      StamenTerrainWithLabels, StamenTerrain
+      StamenTerrainWithLabels, StamenTerrain, openstreetMapVectorTile
     ]
   })
   map.addLayer(baseLayerGroup);
@@ -137,13 +156,48 @@ function init(){
     title: 'openstreetMapFragmentStatic'
   })
 
-  // Raster Tile Layer Group
-  const rasterLayerGroup = new ol.layer.Group({
+  // Vector Layers
+  // Central EU Countries GeoJSON VectorImage Layer
+  const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
+    source: new ol.source.Vector({
+      url: './data/vector_data/Central_EU_countries_GEOJSON.geojson',
+      format: new ol.format.GeoJSON()
+    }),
+    visible: false,
+    title: 'CentralEUCountriesGeoJSON' 
+  })
+  
+  // Central EU Countries KML
+  const EUCountriesKML = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: './data/vector_data/Central_EU_countries_KML.kml',
+      format: new ol.format.KML()
+    }),
+    visible: false,
+    title: 'CentralEUCountriesKML'
+  })
+  
+  // HeatMap
+  const heatMapOnlineFBUsers = new ol.layer.Heatmap({
+    source: new ol.source.Vector({
+      url: './data/vector_data/onlineFBUsers.geojson',
+      format: new ol.format.GeoJSON()
+    }),
+    radius: 20,
+    blur: 12,
+    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
+    title: 'OnlineFBUsers',
+    visible: false
+  })
+  
+  // Layer Group
+  const layerGroup = new ol.layer.Group({
     layers:[
-      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic
+      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic,
+      EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers
     ]
   })
-  map.addLayer(rasterLayerGroup);
+  map.addLayer(layerGroup);
 
   // Layer Switcher Logic for Raster Tile Layers
   const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
@@ -152,7 +206,7 @@ function init(){
       let tileRasterLayerElementValue = this.value;
       let tileRasterLayer;
 
-      rasterLayerGroup.getLayers().forEach(function(element, index, array){
+      layerGroup.getLayers().forEach(function(element, index, array){
         if(tileRasterLayerElementValue === element.get('title')){
           tileRasterLayer = element;
         }
@@ -160,7 +214,6 @@ function init(){
       this.checked ? tileRasterLayer.setVisible(true) : tileRasterLayer.setVisible(false)
     })
   }
-
 }
 
 
