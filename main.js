@@ -13,7 +13,8 @@ function init(){
         source: new ol.source.OSM()
       })
     ],
-    target: 'js-map'
+    target: 'js-map',
+    keyboardEventTarget: document
   })
 
   const popupContainerElement = document.getElementById('popup-coordinates');
@@ -30,6 +31,27 @@ function init(){
     popup.setPosition(clickedCoordinate);
     popupContainerElement.innerHTML = clickedCoordinate;
   })
+  
+  // DragRotate Interaction
+  const dragRotateInteraction = new ol.interaction.DragRotate({
+    condition: ol.events.condition.altKeyOnly
+  }) 
+  map.addInteraction(dragRotateInteraction)
 
+  // Draw Interaction
+  const drawInteraction = new ol.interaction.Draw({
+    type: 'Polygon',
+    freehand: true
+  })
+  map.addInteraction(drawInteraction);
+
+  drawInteraction.on('drawend', function(e){
+    let parser = new ol.format.GeoJSON();
+    let drawnFeatures = parser.writeFeatures([e.feature]);
+    let drawnFeatures1 = parser.writeFeaturesObject([e.feature]);
+    console.log(drawnFeatures);
+    console.log(drawnFeatures1);
+  })
 }
+
 
