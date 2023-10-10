@@ -5,7 +5,8 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-
+  
+  // Map object
   const map = new ol.Map({
     view: new ol.View({
       center: [0, 0],
@@ -185,20 +186,19 @@ function init(){
     }),
     radius: 20,
     blur: 12,
-    // gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
-    // title: 'OnlineFBUsers',
-    // visible: false
+    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
+    title: 'OnlineFBUsers',
+    visible: false
   })
   
   // Layer Group
-  // const layerGroup = new ol.layer.Group({
-  //   layers:[
-  //     tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic,
-  //     EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers
-  //   ]
-  // })
-  // map.addLayer(layerGroup);
-  map.addLayer(heatMapOnlineFBUsers);
+  const layerGroup = new ol.layer.Group({
+    layers:[
+      tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic,
+      EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers
+    ]
+  })
+  map.addLayer(layerGroup);
 
   // Layer Switcher Logic for Raster Tile Layers
   const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
@@ -215,6 +215,31 @@ function init(){
       this.checked ? tileRasterLayer.setVisible(true) : tileRasterLayer.setVisible(false)
     })
   }
+
+  // Vector Feature Popup Information
+  const overlayContainerElement = document.querySelector('.overlay-container')
+  const overlayLayer = new ol.Overlay({
+    element: overlayContainerElement
+  })
+  map.addOverlay(overlayLayer);
+  const overlayFeatureName = document.getElementById('feature-name');
+  const overlayFeatureAdditionInfo = document.getElementById('feature-additional-info');
+
+
+  // Vector Feature Popup Logic
+  map.on('click', function(e){
+    overlayLayer.setPosition(undefined);
+    map.forEachFeatureAtPixel(e.pixel, function(feature, layer){
+      let clickedCoordinate = e.coordinate;
+      let clickedFeatureName = feature.get('name');
+      let clickedFeatureAdditionInfo = feature.get('additionalinfo');
+      if(clickedFeatureName && clickedFeatureAdditionInfo != undefined){
+        overlayLayer.setPosition(clickedCoordinate);
+        overlayFeatureName.innerHTML = clickedFeatureName;
+        overlayFeatureAdditionInfo.innerHTML = clickedFeatureAdditionInfo;
+      }
+    })
+  })
 }
 
 
