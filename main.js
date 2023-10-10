@@ -5,7 +5,7 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-
+  
   // Map object
   const map = new ol.Map({
     view: new ol.View({
@@ -111,8 +111,7 @@ function init(){
         element.setVisible(baseLayerName === baseLayerElementValue)
       })
     })
-  }
-  
+  }  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
@@ -201,20 +200,34 @@ function init(){
     let geometryType = feature.getGeometry().getType();
     let incomeProperty = feature.get('income');
 
+    // Text Styles
+    let featureID = feature.get('ID');
+    let featureIDString = featureID.toString();
+    
+    let textStyles = new ol.style.Style({
+      text: new ol.style.Text({
+        text: featureIDString,
+        scale: 1.5,
+        fill: new ol.style.Fill({
+          color: [18, 18, 18, 1]
+        })
+      })
+    })     
+
     if(geometryType === 'Point'){
-      feature.setStyle([pointStyle]);
+      feature.setStyle([pointStyle, textStyles]);
     }
 
     if(geometryType === 'LineString'){
-      feature.setStyle([lineStringStyle])
+      feature.setStyle([lineStringStyle, textStyles])
     }
 
     if(geometryType === 'Polygon'){
       if(incomeProperty === 'Blue'){
-        feature.setStyle([blueCountriesStyle])
+        feature.setStyle([blueCountriesStyle, textStyles])
       };
       if(incomeProperty === 'Purple'){
-        feature.setStyle([purpleCountriesStyle])
+        feature.setStyle([purpleCountriesStyle, textStyles])
       }
     }
   }
