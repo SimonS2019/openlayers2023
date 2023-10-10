@@ -75,3 +75,11 @@ body {
 .ol-overviewmap{
   bottom: 60px
 }
+
+.btn-success{
+  background-color: rgb(4, 138, 66);
+}
+
+.btn-default{
+  background-color: rgb(255, 255, 255);
+}

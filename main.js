@@ -1,25 +1,45 @@
 window.onload = init;
 
 function init(){
-  // Attribution Control
-  const attributionControl = new ol.control.Attribution({
-    collapsible: true
-  })
-
   // EPSG:3416  for Austria
   proj4.defs("EPSG:3416","+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
   // EPSG:27700 for the UK
   proj4.defs("EPSG:27700","+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs");
   ol.proj.proj4.register(proj4);
 
-  // Map object
+  // Map Controls
+  const attributionControl = new ol.control.Attribution({
+    collapsible: true
+  })
+
+  const scaleLineControl = new ol.control.ScaleLine({
+    units: 'metric',
+    minWidth: 200,
+    bar: true,
+    steps: 4,
+    text: true
+  }) 
+
+  const overViewMapControl = new ol.control.OverviewMap({
+    tipLabel: 'Custom Overview Map',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      })
+    ]
+  })
+
+  const zoomControl = new ol.control.Zoom()
+  const mapControls = [attributionControl, scaleLineControl, overViewMapControl, zoomControl]
+
+
   const map = new ol.Map({
-    view: new ol.View({     
-      center: [0,0],
-      zoom: 4,     
+    view: new ol.View({
+      center: ol.proj.fromLonLat([14.62, 47.89], 'EPSG:3857'),
+      zoom: 4,      
     }),    
     target: 'js-map',
-    controls: ol.control.defaults({attribution: false}).extend([attributionControl])
+    controls: ol.control.defaults({attribution: false}).extend(mapControls)
   })
  
   // Base Layers
@@ -114,11 +134,10 @@ function init(){
       let baseLayerElementValue = this.value;
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue)       
+        element.setVisible(baseLayerName === baseLayerElementValue)      
       })
     })
-  }
-  
+  }  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
@@ -355,26 +374,6 @@ function init(){
   })
 
   // Select Interaction - For Styling Selected Points
-  /*const selectInteraction = new ol.interaction.Select({
-    condition: ol.events.condition.singleClick,
-    layers: function(layer){
-      return [layer.get('title') === 'AustrianCities', layer.get('title') === 'CentralEUCountriesGeoJSON',]
-    },
-    style: new ol.style.Style({
-      image: new ol.style.Circle({
-        fill: new ol.style.Fill({
-          color: [247, 26, 10, 1]
-        }),
-        radius: 12,
-        stroke: new ol.style.Stroke({
-          color: [247, 26, 10, 1],
-          width: 3
-        })
-      })
-    })
-  })
-  map.addInteraction(selectInteraction);*/
-
   const selectInteractionV2 = new ol.interaction.Select();
   map.addInteraction(selectInteractionV2);
   selectInteractionV2.on('select', function(e){ 
@@ -397,26 +396,32 @@ function init(){
     };
   })
 
-  // Map Controls
-  const scaleLineControl = new ol.control.ScaleLine({
-    units: 'metric',
-    minWidth: 200,
-    bar: true,
-    steps: 4,
-    text: true
-  })
-  map.addControl(scaleLineControl);
-
-  const overViewMapControl = new ol.control.OverviewMap({
-    tipLabel: 'Custom Overview Map',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM()
-      })
-    ]
-  })
-
-  map.addControl(overViewMapControl);
+  // Switch ON/OFF Controls Logic
+  const controlButtonElements = document.querySelectorAll('.sidebar > button[type=button]')
+  for(let controlButton of controlButtonElements){
+    controlButton.addEventListener('click', function(e){
+      let buttonElement = e.target;
+      if(buttonElement.className === 'btn-success'){        
+        map.getControls().forEach(function(controlElement){
+          if(controlElement instanceof ol.control[buttonElement.innerHTML]){
+            map.removeControl(controlElement);
+          }
+        })
+        buttonElement.className = buttonElement.className.replace(
+          'btn-success', 'btn-default'
+        );
+      } else {
+        mapControls.forEach(function(controlElement){
+          if(controlElement instanceof ol.control[buttonElement.innerHTML]){
+            map.addControl(controlElement);            
+          }
+        })
+        buttonElement.className = buttonElement.className.replace(
+          'btn-default', 'btn-success'
+        );
+      }
+    })
+  }
 }
 
 
