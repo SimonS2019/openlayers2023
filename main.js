@@ -14,12 +14,9 @@ function init(){
 
   // Map object
   const map = new ol.Map({
-    view: new ol.View({
-      //center: ol.proj.fromLonLat([16.361687, 48.211390], 'EPSG:3416'),
+    view: new ol.View({     
       center: [0,0],
-      zoom: 4,
-      //projection: 'EPSG:3416',
-      //extent: ol.proj.transformExtent([9.5, 46.380516, 16.91, 49.017941], 'EPSG:4326', 'EPSG:3416')     
+      zoom: 4,     
     }),    
     target: 'js-map',
     controls: ol.control.defaults({attribution: false}).extend([attributionControl])
@@ -117,10 +114,7 @@ function init(){
       let baseLayerElementValue = this.value;
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue)
-        //console.log('baseLayerName: ' + baseLayerName, 'baseLayerElementValue: ' + baseLayerElementValue)
-        //console.log(baseLayerName === baseLayerElementValue);
-        //console.log(element.get('title'), element.get('visible'));
+        element.setVisible(baseLayerName === baseLayerElementValue)       
       })
     })
   }
@@ -402,6 +396,27 @@ function init(){
       )
     };
   })
+
+  // Map Controls
+  const scaleLineControl = new ol.control.ScaleLine({
+    units: 'metric',
+    minWidth: 200,
+    bar: true,
+    steps: 4,
+    text: true
+  })
+  map.addControl(scaleLineControl);
+
+  const overViewMapControl = new ol.control.OverviewMap({
+    tipLabel: 'Custom Overview Map',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      })
+    ]
+  })
+
+  map.addControl(overViewMapControl);
 }
 
 
