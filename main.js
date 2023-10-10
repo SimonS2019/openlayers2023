@@ -6,13 +6,16 @@ function init(){
     collapsible: true
   })
 
+  // EPSG:3416  for Austria
+  proj4.defs("EPSG:3416","+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+  ol.proj.proj4.register(proj4);
+
   // Map object
   const map = new ol.Map({
     view: new ol.View({
       center: [0, 0],
       zoom: 3,
-      projection: 'EPSG:4326'     
-      // projection: 'EPSG:3857'     
+      projection: 'EPSG:3416'     
     }),    
     target: 'js-map',
     controls: ol.control.defaults({attribution: false}).extend([attributionControl])
