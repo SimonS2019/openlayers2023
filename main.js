@@ -5,7 +5,7 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-  
+
   // Map object
   const map = new ol.Map({
     view: new ol.View({
@@ -76,7 +76,7 @@ function init(){
   // Vector Tile Layer OpenstreetMap
   const openstreetMapVectorTile = new ol.layer.VectorTile({
     source: new ol.source.VectorTile({
-      url:'Your Map Tiler Layer URL',
+      url:'Your Maptiler Layer URL',
       format: new ol.format.MVT(),
       attributions:'<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
     }),
@@ -84,10 +84,10 @@ function init(){
     title: 'VectorTileLayerOpenstreetMap'
   })
  
-  const openstreetMapVectorTileStyles = 'Your Map Tiler Style URL';
+  const openstreetMapVectorTileStyles = 'Your Maptiler Style URL';
   fetch(openstreetMapVectorTileStyles).then(function(response) {    
     response.json().then(function(glStyle) {       
-      olms.applyStyle(openstreetMapVectorTile, glStyle, 'Your Map Tiler Layer ID');
+      olms.applyStyle(openstreetMapVectorTile, glStyle, 'Your Maptiler Layer ID');
     });
   });
 
@@ -108,16 +108,15 @@ function init(){
       let baseLayerElementValue = this.value;
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue)
+        element.setVisible(baseLayerName === baseLayerElementValue) 
       })
     })
-  }
-  
+  }  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
     source: new ol.source.TileDebug(),
-    visible: true,
+    visible: false,
     title: 'TileDebugLayer'
   })
 
@@ -127,9 +126,10 @@ function init(){
       url: "http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Louisville/LOJIC_LandRecords_Louisville/MapServer",
       attributions: 'Copyright© 2008, MSD, PVA, Louisville Water Company, Louisville Metro Government'
     }),
-    visible: true,
+    visible: false,
     title: 'TileArcGISLayer'
-  })  
+  })
+  
 
   // NOAA WMS Layer
   const NOAAWMSLayer = new ol.layer.Tile({
@@ -142,7 +142,7 @@ function init(){
       },
       attributions: '<a href=https://nowcoast.noaa.gov/>© NOAA<a/>'
     }),
-    visible: true,
+    visible: false,
     title: 'NOAAWMSLayer'
   })
 
@@ -153,18 +153,38 @@ function init(){
       imageExtent: [4991698.9328313675, 5050292.393744084, 10008191.828130603, 10013417.911357462],
       attributions: '<a href=https://www.openstreetmap.org/copyright/>© OpenStreetMap contributors<a/>',
     }),
-    title: 'openstreetMapFragmentStatic'
+    title: 'openstreetMapFragmentStatic',
+    visible: false,
   })
 
   // Vector Layers
+  // Styling of vector features
+  // Style for polygons
+  const fillStyle = new ol.style.Fill({
+    color: [40, 119, 247, 1]
+  })
+
+  // Style for lines
+  const strokeStyle = new ol.style.Stroke({
+    color: [30, 30, 31, 1],
+    width: 1.2,
+    lineCap: 'square',
+    lineJoin: 'bevel',
+    lineDash: [3, 3]
+  }) 
+
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
     source: new ol.source.Vector({
       url: './data/vector_data/Central_EU_countries_GEOJSON.geojson',
       format: new ol.format.GeoJSON()
     }),
-    visible: false,
-    title: 'CentralEUCountriesGeoJSON' 
+    visible: true,
+    title: 'CentralEUCountriesGeoJSON' ,
+    style: new ol.style.Style({
+      fill: fillStyle,
+      stroke: strokeStyle,
+    })
   })
   
   // Central EU Countries KML
