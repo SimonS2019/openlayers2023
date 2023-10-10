@@ -108,11 +108,11 @@ function init(){
       let baseLayerElementValue = this.value;
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue) 
+        element.setVisible(baseLayerName === baseLayerElementValue)
       })
     })
-  }  
-
+  }
+  
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
     source: new ol.source.TileDebug(),
@@ -168,10 +168,29 @@ function init(){
   const strokeStyle = new ol.style.Stroke({
     color: [30, 30, 31, 1],
     width: 1.2,
-    lineCap: 'square',
-    lineJoin: 'bevel',
-    lineDash: [3, 3]
+    //lineCap: 'square',
+    //: 'bevel',
+    //lineDash: [3, 3]
   }) 
+
+  const regularShape = new ol.style.RegularShape({
+    fill: new ol.style.Fill({
+      color: [245, 49, 5, 1]
+    }),
+    stroke: strokeStyle,
+    points: 3,
+    radius1: 10,
+    radius2: 5,
+    rotation: 0.5
+  })
+
+  const circleStyle = new ol.style.Circle({
+    fill: new ol.style.Fill({
+      color: [245, 49, 5, 1]
+    }),
+    radius: 7,
+    stroke: strokeStyle
+  })
 
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
@@ -184,6 +203,7 @@ function init(){
     style: new ol.style.Style({
       fill: fillStyle,
       stroke: strokeStyle,
+      image: circleStyle
     })
   })
   
