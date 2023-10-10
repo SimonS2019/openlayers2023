@@ -5,11 +5,12 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-  
+
   // EPSG:3416  for Austria
   proj4.defs("EPSG:3416","+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+  // EPSG:27700 for the UK
+  proj4.defs("EPSG:27700","+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs");
   ol.proj.proj4.register(proj4);
-  //console.log(ol.proj.toLonLat([625422.3208012241, 484928.2125922037], 'EPSG:3416'));
 
   // Map object
   const map = new ol.Map({
@@ -120,8 +121,7 @@ function init(){
         element.setVisible(baseLayerName === baseLayerElementValue)
       })
     })
-  }
-  
+  }  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
@@ -242,6 +242,32 @@ function init(){
     }
   }
 
+  // Austrian Cities EPSG:27700 
+  const AustrianCities = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: './data/vector_data/austrian_cities_EPSG_27700.geojson',
+      format: new ol.format.GeoJSON({
+        dataProjection: 'EPSG:27700'
+      })
+    }),
+    visible: true,
+    title: 'AustrianCities',
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+          color: [15,15,15, 1]
+        }),
+        radius: 10,
+        stroke: new ol.style.Stroke({
+          color: [15, ,15 ,15,1],
+          width: 2
+        })
+      })
+    })
+  })
+  map.addLayer(AustrianCities)
+
+  
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
     source: new ol.source.Vector({
