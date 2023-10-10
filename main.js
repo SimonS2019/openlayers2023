@@ -5,7 +5,7 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-  
+
   // Map object
   const map = new ol.Map({
     view: new ol.View({
@@ -109,9 +109,6 @@ function init(){
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
         element.setVisible(baseLayerName === baseLayerElementValue)
-        //console.log('baseLayerName: ' + baseLayerName, 'baseLayerElementValue: ' + baseLayerElementValue)
-        //console.log(baseLayerName === baseLayerElementValue);
-        //console.log(element.get('title'), element.get('visible'));
       })
     })
   }
@@ -163,48 +160,64 @@ function init(){
 
   // Vector Layers
   // Styling of vector features
-  // Style for polygons
-  const fillStyle = new ol.style.Fill({
-    color: [40, 119, 247, 1]
+  // Points Style
+  const pointStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      fill: new ol.style.Fill({
+        color: [245, 10, 14, 1]
+      }),
+      radius: 7,
+      stroke: new ol.style.Stroke({
+        color: [245, 10, 14, 1],
+        width: 2
+      })
+
+    })
+  })
+  // Lines Style
+  const lineStringStyle = new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: [59, 59, 59, 1],
+      width: 2
+    })
   })
 
-  // Style for lines
-  const strokeStyle = new ol.style.Stroke({
-    color: [30, 30, 31, 1],
-    width: 1.2,
-    //lineCap: 'square',
-    //: 'bevel',
-    //lineDash: [3, 3]
-  }) 
-
-  const regularShape = new ol.style.RegularShape({
+  // Polygon Style
+  // Blue polygons
+  const blueCountriesStyle = new ol.style.Style({
     fill: new ol.style.Fill({
-      color: [245, 49, 5, 1]
-    }),
-    stroke: strokeStyle,
-    points: 3,
-    radius1: 10,
-    radius2: 5,
-    rotation: 0.5
+      color: [56, 41, 194, 1]
+    })
   })
 
-  // Icon Marker Style
-  const iconMarkerStyle = new ol.style.Icon({
-    src: './data/static_images/marker.png',
-    size: [100, 100],
-    offset: [0, 0],
-    opacity: 1,
-    scale: 0.35,
-    color: [10, 98, 240, 1]
-  })
-
-  const circleStyle = new ol.style.Circle({
+  // Purple polygons
+  const purpleCountriesStyle = new ol.style.Style({
     fill: new ol.style.Fill({
-      color: [245, 49, 5, 1]
-    }),
-    radius: 7,
-    stroke: strokeStyle
+      color: [164, 63, 204, 1]
+    })
   })
+
+  const EUCountriesStyle = function(feature){
+    let geometryType = feature.getGeometry().getType();
+    let incomeProperty = feature.get('income');
+
+    if(geometryType === 'Point'){
+      feature.setStyle([pointStyle]);
+    }
+
+    if(geometryType === 'LineString'){
+      feature.setStyle([lineStringStyle])
+    }
+
+    if(geometryType === 'Polygon'){
+      if(incomeProperty === 'Blue'){
+        feature.setStyle([blueCountriesStyle])
+      };
+      if(incomeProperty === 'Purple'){
+        feature.setStyle([purpleCountriesStyle])
+      }
+    }
+  }
 
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
@@ -214,11 +227,7 @@ function init(){
     }),
     visible: true,
     title: 'CentralEUCountriesGeoJSON' ,
-    style: new ol.style.Style({
-      fill: fillStyle,
-      stroke: strokeStyle,
-      image: iconMarkerStyle
-    })
+    style: EUCountriesStyle
   })
   
   // Central EU Countries KML
