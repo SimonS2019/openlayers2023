@@ -5,7 +5,7 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-
+  
   // Map object
   const map = new ol.Map({
     view: new ol.View({
@@ -109,10 +109,14 @@ function init(){
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
         element.setVisible(baseLayerName === baseLayerElementValue)
+        //console.log('baseLayerName: ' + baseLayerName, 'baseLayerElementValue: ' + baseLayerElementValue)
+        //console.log(baseLayerName === baseLayerElementValue);
+        //console.log(element.get('title'), element.get('visible'));
       })
     })
   }
   
+
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
     source: new ol.source.TileDebug(),
@@ -184,6 +188,16 @@ function init(){
     rotation: 0.5
   })
 
+  // Icon Marker Style
+  const iconMarkerStyle = new ol.style.Icon({
+    src: './data/static_images/marker.png',
+    size: [100, 100],
+    offset: [0, 0],
+    opacity: 1,
+    scale: 0.35,
+    color: [10, 98, 240, 1]
+  })
+
   const circleStyle = new ol.style.Circle({
     fill: new ol.style.Fill({
       color: [245, 49, 5, 1]
@@ -203,7 +217,7 @@ function init(){
     style: new ol.style.Style({
       fill: fillStyle,
       stroke: strokeStyle,
-      image: circleStyle
+      image: iconMarkerStyle
     })
   })
   
