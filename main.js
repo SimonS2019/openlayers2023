@@ -76,7 +76,7 @@ function init(){
   // Vector Tile Layer OpenstreetMap
   const openstreetMapVectorTile = new ol.layer.VectorTile({
     source: new ol.source.VectorTile({
-      url:'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=eNZMd85Lie6HD3TUfd5e',
+      url:'Your Map Tiler Layer URL',
       format: new ol.format.MVT(),
       attributions:'<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
     }),
@@ -87,7 +87,7 @@ function init(){
   const openstreetMapVectorTileStyles = 'Your Map Tiler Style URL';
   fetch(openstreetMapVectorTileStyles).then(function(response) {    
     response.json().then(function(glStyle) {       
-      olms.applyStyle(openstreetMapVectorTile, glStyle, 'Your Map Tiler ID');
+      olms.applyStyle(openstreetMapVectorTile, glStyle, 'Your Map Tiler Layer ID');
     });
   });
 
@@ -129,8 +129,7 @@ function init(){
     }),
     visible: true,
     title: 'TileArcGISLayer'
-  })
-  
+  })  
 
   // NOAA WMS Layer
   const NOAAWMSLayer = new ol.layer.Tile({
@@ -233,10 +232,15 @@ function init(){
       let clickedCoordinate = e.coordinate;
       let clickedFeatureName = feature.get('name');
       let clickedFeatureAdditionInfo = feature.get('additionalinfo');
-      if(clickedFeatureName && clickedFeatureAdditionInfo != undefined){
+      //if(clickedFeatureName && clickedFeatureAdditionInfo != undefined){
         overlayLayer.setPosition(clickedCoordinate);
         overlayFeatureName.innerHTML = clickedFeatureName;
         overlayFeatureAdditionInfo.innerHTML = clickedFeatureAdditionInfo;
+      //}
+    },
+    {
+      layerFilter: function(layerCandidate){
+        return layerCandidate.get('title')  === 'CentralEUCountriesGeoJSON'
       }
     })
   })
