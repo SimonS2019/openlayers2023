@@ -18,14 +18,12 @@ function init(){
       center: ol.proj.fromLonLat([16.361687, 48.211390], 'EPSG:3416'),
       zoom: 10,
       projection: 'EPSG:3416',
-      extent: ol.proj.transformExtent([9.5, 46.380516, 16.91, 49.017941], 'EPSG:4326', 'EPSG:3416')     
+      //extent: ol.proj.transformExtent([9.5, 46.380516, 16.91, 49.017941], 'EPSG:4326', 'EPSG:3416')     
     }),    
     target: 'js-map',
     controls: ol.control.defaults({attribution: false}).extend([attributionControl])
   })
-  map.on('click', function(e){
-    console.log(e.coordinate);
-  })
+
   // Base Layers
   // Openstreet Map Standard
   const openstreetMapStandard = new ol.layer.Tile({
@@ -356,6 +354,27 @@ function init(){
       }
     })
   })
+
+  // Select Interaction - For Styling Selected Points
+  const selectInteraction = new ol.interaction.Select({
+    condition: ol.events.condition.singleClick,
+    layers: function(layer){
+      return [layer.get('title') === 'AustrianCities', layer.get('title') === 'CentralEUCountriesGeoJSON',]
+    },
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+          color: [247, 26, 10, 1]
+        }),
+        radius: 12,
+        stroke: new ol.style.Stroke({
+          color: [247, 26, 10, 1],
+          width: 3
+        })
+      })
+    })
+  })
+  map.addInteraction(selectInteraction);
 }
 
 
