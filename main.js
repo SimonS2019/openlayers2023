@@ -15,15 +15,16 @@ function init(){
   // Map object
   const map = new ol.Map({
     view: new ol.View({
-      center: ol.proj.fromLonLat([16.361687, 48.211390], 'EPSG:3416'),
-      zoom: 10,
-      projection: 'EPSG:3416',
+      //center: ol.proj.fromLonLat([16.361687, 48.211390], 'EPSG:3416'),
+      center: [0,0],
+      zoom: 4,
+      //projection: 'EPSG:3416',
       //extent: ol.proj.transformExtent([9.5, 46.380516, 16.91, 49.017941], 'EPSG:4326', 'EPSG:3416')     
     }),    
     target: 'js-map',
     controls: ol.control.defaults({attribution: false}).extend([attributionControl])
   })
-
+ 
   // Base Layers
   // Openstreet Map Standard
   const openstreetMapStandard = new ol.layer.Tile({
@@ -117,9 +118,13 @@ function init(){
       baseLayerGroup.getLayers().forEach(function(element, index, array){
         let baseLayerName = element.get('title');
         element.setVisible(baseLayerName === baseLayerElementValue)
+        //console.log('baseLayerName: ' + baseLayerName, 'baseLayerElementValue: ' + baseLayerElementValue)
+        //console.log(baseLayerName === baseLayerElementValue);
+        //console.log(element.get('title'), element.get('visible'));
       })
     })
-  }  
+  }
+  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
@@ -356,7 +361,7 @@ function init(){
   })
 
   // Select Interaction - For Styling Selected Points
-  const selectInteraction = new ol.interaction.Select({
+  /*const selectInteraction = new ol.interaction.Select({
     condition: ol.events.condition.singleClick,
     layers: function(layer){
       return [layer.get('title') === 'AustrianCities', layer.get('title') === 'CentralEUCountriesGeoJSON',]
@@ -374,7 +379,29 @@ function init(){
       })
     })
   })
-  map.addInteraction(selectInteraction);
+  map.addInteraction(selectInteraction);*/
+
+  const selectInteractionV2 = new ol.interaction.Select();
+  map.addInteraction(selectInteractionV2);
+  selectInteractionV2.on('select', function(e){ 
+    let selectedFeature = e.selected;   
+    if(selectedFeature.length > 0 && selectedFeature[0].getGeometry().getType() === 'Point'){
+      selectedFeature[0].setStyle(
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+              color: [247, 26, 10, 1]
+            }),
+            radius: 12,
+            stroke: new ol.style.Stroke({
+              color: [247, 26, 10, 1],
+              width: 3
+            })
+          })
+        })
+      )
+    };
+  })
 }
 
 
