@@ -5,17 +5,20 @@ function init(){
   const attributionControl = new ol.control.Attribution({
     collapsible: true
   })
-  
+
   // Map object
   const map = new ol.Map({
     view: new ol.View({
       center: [0, 0],
-      zoom: 3,     
+      zoom: 3,
+      projection: 'EPSG:3857'     
     }),    
     target: 'js-map',
     controls: ol.control.defaults({attribution: false}).extend([attributionControl])
   })
-
+  map.on('click', function(e){
+    console.log(e.coordinate);
+  })
   // Base Layers
   // Openstreet Map Standard
   const openstreetMapStandard = new ol.layer.Tile({
@@ -111,7 +114,8 @@ function init(){
         element.setVisible(baseLayerName === baseLayerElementValue)
       })
     })
-  }  
+  }
+  
 
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
